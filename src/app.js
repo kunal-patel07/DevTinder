@@ -6,15 +6,23 @@ const port = 3000;
 
 
 
-app.use("/home/wait",(req,res)=>{
-    res.send("this is route of route of home and wait")
+app.post("/user",(req,res)=>{
+   res.send("user added successfully")
 })
 
-app.use("/home",(req,res)=>{
-    res.send("this is home page route")
+app.get("/user",(req,res)=>{
+    res.send("user detail")
 })
 
-app.use("/",(req,res)=>{
+app.delete("/user",(req,res)=>{
+      res.send("user deleted successful")
+})
+
+app.get("/test",(req,res)=>{
+    res.send("this is for testing")
+})
+
+app.get("/",(req,res)=>{
   res.send("this is route page")
 })
 
