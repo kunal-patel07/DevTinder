@@ -5,13 +5,17 @@ const app = express()
 const port = 3000;
 
 
-app.get("/",(req,res)=>{
-    res.send("this will display on behalf of request handler")
+
+app.use("/home/wait",(req,res)=>{
+    res.send("this is route of route of home and wait")
 })
 
-app.get("/test:user",(req,res)=>{
-   console.log(req.params ) 
-    res.send("this is for testing")
+app.use("/home",(req,res)=>{
+    res.send("this is home page route")
+})
+
+app.use("/",(req,res)=>{
+  res.send("this is route page")
 })
 
 app.listen(port,()=>{
