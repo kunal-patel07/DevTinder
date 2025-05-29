@@ -1,34 +1,19 @@
 const express = require("express");
-
 const app = express();
-
+const {authAdmin} =require("./middlewares/auth")
 const port = 3000;
-app.get(
-  "/user",
-  (req, res, next) => {
-    console.log("first route");
-    next();
-  },
-  (req, res) => {
-    console.log("2nd route");
-    res.send("this is inside route");
-  }
-);
-// app.post("/user",(req,res)=>{
-//    res.send("user data stored to database")
-// })
+//middleware 
+app.use("/admin",authAdmin)
 
-// app.delete("/user",(req,res)=>{
-//       res.send("user deleted successful")
-// })
 
-// app.get("/test",(req,res)=>{
-//     res.send("this is for testing")
-// })
 
-// app.get("/",(req,res)=>{
-//   res.send("this is route page")
-// })
+app.get("/admin/getData",(req,res)=>{
+  res.send("get all data successfully")
+})
+
+app.get("/admin/deleteUser",(req,res)=>{
+  res.send("deleted user successfully")
+})
 
 app.listen(port, () => {
   console.log("port is listening on ", port);
