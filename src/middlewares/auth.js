@@ -1,10 +1,21 @@
 const authAdmin = (req, res, next) => {
-  const token = "xyz";
-  const isAdminTrue = token === "xyez";
-  if (!isAdminTrue) {
+  const token = "compsec";
+  const isAdiminTrue = token === "compsec";
+  if (!isAdiminTrue) {
     res.status(401).send("unauthorized request");
   } else {
     next();
   }
 };
-module.exports = { authAdmin };
+
+const authUser = (req, res, next) => {
+  const token = "compsec";
+  const isAdiminTrue = token === "compsec";
+  if (!isAdiminTrue) {
+    res.status(401).send("unauthorized request");
+  } else {
+    next();
+  }
+};
+
+module.exports = { authAdmin, authUser };
