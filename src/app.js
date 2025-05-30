@@ -1,33 +1,31 @@
 const express = require("express");
-const { dbConn } = require("./config/database");
+const {dbConn}  = require("./config/database")
 const {User} = require("./models/user")
-
-
-const app = express();
 const port = 3000;
 
-app.post("/signup", async (req,res)=>{
-  const user  =new User ({
-    firstName:"vishal",
-    lastName : "chaudhary",
-    emailId : "vc@gmail.com",
-    pass:"vcqw12",
-    age:20
-  })
-  try {
-    await user.save()
-    res.send("user saved to database")
-  } catch (error) {
-     res.status(400).send("bad request"+ error)    
-  }
+let app = express()
+
+//kind of middleware
+app.use(express.json())
+app.post("/signup",async (req,res)=>{
+
+      let user = new User(req.body)
+      try {
+        await user.save()
+        res.send("user saved to database sucessfully")
+        
+      } catch (error) {
+        console.log("error storing data")
+      }
 })
 
 
+
 dbConn().then(()=>{
-  console.log("connected to database successfully")
+  console.log("connected to database")
   app.listen(port,()=>{
-    console.log("server is running on port",port)
-   }) 
+       console.log("server is running on",port)
+  },port)
 }).catch(()=>{
-  console.log("error connected to database")
+  console.log("error in connection`")
 })
