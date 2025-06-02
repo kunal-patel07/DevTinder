@@ -28,6 +28,8 @@ app.post("/",async (req,res)=>{
   await datafromServer.save()
  res.send("user registred")
 })
+
+
 app.get("/feed",async(req,res)=>{
   const data = await User.find({})
   res.send(data)
@@ -47,7 +49,9 @@ if(!userDelete){
   } catch (error) {
     res.status(404).send("error deleting user or userid is not exist")
   }
-})  
+})   
+
+
 
 app.post("/signup", async (req, res) => {
   let user = new User(req.body);
@@ -77,6 +81,19 @@ app.get("/findByMail",async (req,res)=>{
    res.send(dataFromDb)
   } catch (error) {
     
+  }
+})
+
+// update data using patch method
+
+app.patch("/user",async(req,res)=>{
+  const userData = req.body.userId
+const data  = req.body
+  try {
+    const updatedDb = await  User.findByIdAndUpdate({_id:userData},data)
+    res.send("user updated successfully")
+  } catch (error) {
+    res.status(401).send("user couldn't update")
   }
 })
 
