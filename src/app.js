@@ -97,7 +97,18 @@ const data  = req.body
   }
 })
 
-
+//update data using email id 
+app.patch("/userUpdateEmail",async(req,res)=>{
+  const userMail = req.body.mailId
+  const data  = req.body;
+  try {
+  const mailIdUpadate  = await User.findOneAndUpdate({emailId:userMail} , data)
+  console.log(mailIdUpadate)
+  res.send("user data updated successfully")
+} catch (error) {
+  res.status(401).send("user data couldn't updated")
+  }
+})
 
 
 dbConn()
