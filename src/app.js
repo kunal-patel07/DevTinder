@@ -3,11 +3,21 @@
     const port = 3000;
 
 
-    app.get("/user/:id",(req,res)=>{
-        const id = req.params.id;
-        console.log(id)
-        res.send(`user got get request ${id}`)
-    }) 
+    app.use("/user",(req,res,next)=>{
+        console.log("1st route handler");
+        res.send(`handling 1st route`);
+        next();
+    },(req,res,next)=>{
+        console.log("2nd route handler");
+        res.send(`handling 2nd route`);
+        next()
+    },
+    (req,res,next)=>{
+        res.send("this is 3rd route")
+        console.log("this is 3rd route")
+        next();
+    }
+); 
 
 
 
