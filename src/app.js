@@ -1,28 +1,21 @@
-    const express = require("express");
-    const app = express();
-    const port = 3000;
-
-
-    app.use("/user",(req,res,next)=>{
-        console.log("1st route handler");
-        res.send(`handling 1st route`);
-        next();
-    },(req,res,next)=>{
-        console.log("2nd route handler");
-        res.send(`handling 2nd route`);
-        next()
-    },
-    (req,res,next)=>{
-        res.send("this is 3rd route")
-        console.log("this is 3rd route")
-        next();
-    }
-); 
+const express = require("express");
+const app = express();
+const port = 3000;
+const {adminAuth , userAuth}  = require("./middlewares/auth.js");
 
 
 
+app.use("/admin", adminAuth);
+
+app.use("/user",userAuth,(req,res)=>{
+    res.send("this is a basic user data")
+})
+app.use("/admin/allData",(req,res)=>{
+    res.send("all data sent")
+})
 
 
-    app.listen(port,()=>{
-        console.log(` server is running on ${port} `)
-    })
+
+app.listen(port, () => {
+  console.log(` server is running on ${port} `);
+});
