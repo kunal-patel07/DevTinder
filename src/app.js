@@ -1,19 +1,16 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-const {adminAuth , userAuth}  = require("./middlewares/auth.js");
 
-
-
-app.use("/admin", adminAuth);
-
-app.use("/user",userAuth,(req,res)=>{
-    res.send("this is a basic user data")
+app.use("/user",(req,res)=>{
+    throw new Error("something went wrong");    
 })
-app.use("/admin/allData",(req,res)=>{
-    res.send("all data sent")
+app.use("/",(err,req,res,next)=>{
+    if(err){
+      res.status(404).send("new error occured conact support team")
+      console.log("err handled by express err handled")
+    }
 })
-
 
 
 app.listen(port, () => {
