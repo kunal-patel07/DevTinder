@@ -6,6 +6,30 @@ const User = require("./models/user");
 
 app.use(express.json());
 
+app.get("/users", async (req, res) => {
+  try {
+    const userEmailId = await req.body.emailId;
+    const user = await User.findOne({ emailId: userEmailId });
+    if (user == 0) {
+      res.status(404).send("user not found");
+    } else {
+      res.send(user);
+    }
+  } catch (err) {
+    res.status(404).send("user not found");
+  }
+});
+
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+
+    await res.send(users);
+  } catch (err) {
+    res.status(404).send("users not found");
+  }
+});
+
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
   try {
