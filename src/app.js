@@ -4,13 +4,10 @@ const port = 3000;
 const connectDb = require("./config/database");
 const User = require("./models/user");
 
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "Michael",
-    lastName: "Phelps",
-    emailId: "michel@phelps.com",
-    password: "mp@swim",
-  });
+  const user = new User(req.body);
   try {
     await user.save();
     res.send("user data saved successfully");
