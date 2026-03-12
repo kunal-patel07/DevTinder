@@ -6,30 +6,64 @@ const User = require("./models/user");
 
 app.use(express.json());
 
-app.get("/users", async (req, res) => {
+//update user by email
+app.patch("/userss", async (req, res) => {
+  const userMail = req.body.emailId;
+  const userData = req.body;
+  console.log(userMail);
   try {
-    const userEmailId = await req.body.emailId;
-    const user = await User.findOne({ emailId: userEmailId });
-    if (user == 0) {
-      res.status(404).send("user not found");
-    } else {
-      res.send(user);
-    }
+    const userUpdate = await User.findOneAndUpdate({emailId : userMail},  userData );
+    res.send(userUpdate);
+  } catch (err) {
+    res.status(400).send("bad request");
+  }
+});
+
+//update user by id
+app.patch("/users", async (req, res) => {
+  const userId = req.body.userId;
+  const user = req.body;
+
+  try {
+    const userUpdate = await User.findByIdAndUpdate(userId, user);
+    res.send("user updated successfully");
   } catch (err) {
     res.status(404).send("user not found");
   }
 });
 
+//delete user by id
+app.delete("/users", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const deleteUser = await User.findByIdAndDelete({ _id: userId });
+  } catch (error) {
+    res.status(400).send("bad request");
+  }
+});
+
+//find user by mailId
+app.get("/users", async (req, res) => {
+  try {
+    const userMail = req.body.emailId;
+    console.log(userMail);
+    const user = await User.find({ emailId: userMail });
+    res.send(user);
+  } catch (err) {
+    res.status(404).send("user not found");
+  }
+});
+//get all users from database
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
-
-    await res.send(users);
+    res.send(users);
   } catch (err) {
     res.status(404).send("users not found");
   }
 });
 
+//add new user to database
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
   try {
