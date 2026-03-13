@@ -3,9 +3,71 @@ const app = express();
 const port = 3000;
 const connectDb = require("./config/database");
 const User = require("./models/user");
-const { validateSignUp } = require("./utils/validation");
+const { validateSignUp,validateSignIn } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 app.use(express.json());
+
+
+
+
+
+
+//add new user to database
+app.post("/signup", async (req, res) => {
+  try {
+    // validate user
+    validateSignUp(req);
+    const { firstName, lastName, emailId, password } = req.body;
+
+    // encrypt password
+    const encryptPasword = await bcrypt.hash(password,10);
+    console.log(encryptPasword);
+
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: encryptPasword,
+    });
+
+    await user.save();
+    res.send("user data saved successfully");
+  } catch (err) {
+    res.status(400).send("ERROR : " + err);
+  }
+});
+
+//sign in an exsiting user 
+
+app.post("/signin",async (req,res)=>{
+
+  try {
+
+ validateSignIn(req);
+
+const {emailId , password} = req.body;
+  
+  const user = await User.findOne({emailId : emailId});
+   if(!user){
+    throw new Error ("Invalid Credential");
+  }
+
+  const checkPassword  = await bcrypt.compare(password,user.password);
+      
+  if(!checkPassword){
+    throw new Error("Invalid Credential");
+  }   
+  res.send("login successful");
+  }catch(err){
+    res.status(400).send("ERROR : " + err);
+  }
+})
+
+
+
+
+
+
 
 //update user by email
 app.patch("/userss", async (req, res) => {
@@ -81,30 +143,6 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-//add new user to database
-app.post("/signup", async (req, res) => {
-  try {
-    // validate user
-    validateSignUp(req);
-    const { firstName, lastName, emailId, password } = req.body;
-
-    // encrypt password
-    const encryptPasword = await bcrypt.hash(password,10);
-    console.log(encryptPasword);
-
-    const user = new User({
-      firstName,
-      lastName,
-      emailId,
-      password: encryptPasword,
-    });
-
-    await user.save();
-    res.send("user data saved successfully");
-  } catch (err) {
-    res.status(400).send("ERROR : " + err);
-  }
-});
 
 connectDb()
   .then(() => {

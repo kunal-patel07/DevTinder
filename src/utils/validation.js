@@ -1,5 +1,5 @@
 const validate = require("validator");
-
+//validation for signup
 const validateSignUp = (req)=>{
 
   const {firstName, lastName , emailId , password} = req.body;
@@ -14,6 +14,23 @@ const validateSignUp = (req)=>{
 
 }
 
+//validation for signin
 
-module.exports = {validateSignUp};
+const validateSignIn = (req) => { 
+  const {emailId , password } = req.body;
+
+  if(!validate.isEmail(emailId) ){
+    throw new Error ("invalid email format")
+  }else if (!validate.isStrongPassword(password)){
+    throw new Error ("invalid password format");
+  }
+
+}
+
+
+
+
+
+
+module.exports = {validateSignUp , validateSignIn};
 
