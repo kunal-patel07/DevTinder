@@ -20,11 +20,23 @@ app.patch("/userss", async (req, res) => {
 });
 
 //update user by id
-app.patch("/users", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/users/:userId", async (req, res) => {
+  const userId = req.params.userId;
   const user = req.body;
 
+
+
   try {
+
+     //add which fields can be updated 
+     const ALLOWWED_UPADTED = ["lastName", "gender", "skills" ];
+      //check every line of ALLOWED UPADATE and compare with user if it is included or not 
+     const IsUpdated = Object.keys(user).every((k)=> ALLOWWED_UPADTED.includes(k));
+
+     if(!IsUpdated) { 
+      throw new Error ("update not allowed");
+     }
+
     const userUpdate = await User.findByIdAndUpdate(userId, user,{runValidators : true});
     res.send("user updated successfully");
   } catch (err) {
