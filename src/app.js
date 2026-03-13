@@ -12,7 +12,7 @@ app.patch("/userss", async (req, res) => {
   const userData = req.body;
   console.log(userMail);
   try {
-    const userUpdate = await User.findOneAndUpdate({emailId : userMail},  userData );
+    const userUpdate = await User.findOneAndUpdate({emailId : userMail},  userData ,{runValidators : true});
     res.send(userUpdate);
   } catch (err) {
     res.status(400).send("bad request");
@@ -25,10 +25,10 @@ app.patch("/users", async (req, res) => {
   const user = req.body;
 
   try {
-    const userUpdate = await User.findByIdAndUpdate(userId, user);
+    const userUpdate = await User.findByIdAndUpdate(userId, user,{runValidators : true});
     res.send("user updated successfully");
   } catch (err) {
-    res.status(404).send("user not found");
+    res.status(404).send("Something Went Wrong" + err.message);
   }
 });
 
