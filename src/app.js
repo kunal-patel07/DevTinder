@@ -29,7 +29,7 @@ app.patch("/users/:userId", async (req, res) => {
   try {
 
      //add which fields can be updated 
-     const ALLOWWED_UPADTED = ["lastName", "gender", "skills" ];
+     const ALLOWWED_UPADTED = ["lastName", "gender", "skills" ,"photoUrl"];
       //check every line of ALLOWED UPADATE and compare with user if it is included or not 
      const IsUpdated = Object.keys(user).every((k)=> ALLOWWED_UPADTED.includes(k));
 
