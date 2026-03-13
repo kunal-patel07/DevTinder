@@ -3,14 +3,12 @@ const app = express();
 const port = 3000;
 const connectDb = require("./config/database");
 const User = require("./models/user");
-const { validateSignUp,validateSignIn } = require("./utils/validation");
+const { validateSignUp, validateSignIn } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 app.use(express.json());
-
-
-
-
-
+app.use(cookieParser());
 
 //add new user to database
 app.post("/signup", async (req, res) => {
@@ -20,7 +18,7 @@ app.post("/signup", async (req, res) => {
     const { firstName, lastName, emailId, password } = req.body;
 
     // encrypt password
-    const encryptPasword = await bcrypt.hash(password,10);
+    const encryptPasword = await bcrypt.hash(password, 10);
     console.log(encryptPasword);
 
     const user = new User({
@@ -37,37 +35,52 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-//sign in an exsiting user 
+//sign in an exsiting user
 
-app.post("/signin",async (req,res)=>{
-
+app.post("/signin", async (req, res) => {
   try {
+    validateSignIn(req);
 
- validateSignIn(req);
+    const { emailId, password } = req.body;
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid Credential");
+    }
+  const checkPassword = await bcrypt.compare(password, user.password);
 
-const {emailId , password} = req.body;
-  
-  const user = await User.findOne({emailId : emailId});
-   if(!user){
-    throw new Error ("Invalid Credential");
-  }
+    if (checkPassword) {
+      //genrate jwt token
+      const token = jwt.sign({_id:user._id},"dsds");
 
-  const checkPassword  = await bcrypt.compare(password,user.password);
-      
-  if(!checkPassword){
-    throw new Error("Invalid Credential");
-  }   
-  res.send("login successful");
-  }catch(err){
+      res.cookie("token" , token);
+
+
+       res.send("signin successfully")
+    } else {
+      throw new Error("Invalid Credential");
+    }
+  } catch (err) {
     res.status(400).send("ERROR : " + err);
   }
-})
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+     const {token} = req.cookies;
+
+   const decodeMessage =await jwt.verify(token , "dsds");
+
+console.log(decodeMessage)
+   const {_id} = decodeMessage
+// console.log(_id)
+    const user = await User.findById(_id);
 
 
-
-
-
-
+  res.send(user);
+  } catch (err) {
+    res.status(404).send("Error : " + err);
+  }
+});
 
 //update user by email
 app.patch("/userss", async (req, res) => {
@@ -142,7 +155,6 @@ app.get("/feed", async (req, res) => {
     res.status(404).send("users not found");
   }
 });
-
 
 connectDb()
   .then(() => {
