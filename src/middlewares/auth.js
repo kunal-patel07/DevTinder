@@ -1,24 +1,24 @@
-const adminAuth =  (req,res,next)=>{
-    const token = "xyz";
-    const isAdminAuthorized = token ==="xyz";
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const userAuth = async (req, res, next) => {
+  // we don't want to genrate jwt so we don't need to genrate jwt token
 
-    if(!isAdminAuthorized) { 
-        res.status(401).send("Unauthorized Access");
-    }else {  
-        next();
+  try {
+    const { token } = req.cookies;
+
+    if (!token) {
+      throw new Error("invalid crendential");
     }
-}
 
+    const decodeObj = jwt.verify(token, "fdms");
 
-const userAuth = (req,res,next)=>{
-    console.log("user auth is getting checked");
-    const token = "xyz";
-    const isUserAuthorized = token === "xyz";
-    if(!isUserAuthorized){
-        res.status(401).send("Unauthorized user");
-    }else { 
-        next();
-    }
-}
+    const { _id } = decodeObj;
+     const user = await User.findById(_id);
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(400).send("Error : " + err.message);
+  }
+};
 
-module.exports =  {adminAuth,userAuth};
+module.exports = { userAuth };

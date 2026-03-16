@@ -1,5 +1,6 @@
 const validate = require("validator");
 //validation for signup
+
 const validateSignUp = (req)=>{
 
   const {firstName, lastName , emailId , password} = req.body;
@@ -26,11 +27,6 @@ const validateSignIn = (req) => {
   }
 
 }
-
-
-
-
-
-
+ 
 module.exports = {validateSignUp , validateSignIn};
 
