@@ -26,7 +26,9 @@ const validateSignIn = (req) => {
     throw new Error ("invalid password format");
   }
 
-}
+} 
+
+
  
 module.exports = {validateSignUp , validateSignIn};
 
