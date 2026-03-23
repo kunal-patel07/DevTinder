@@ -27,13 +27,10 @@ profileRouter.post("/profile/edit", userAuth, async (req, res) => {
 
     const loggedInUser = req.user;
 
-    console.log(loggedInUser);
-
+ 
     Object.keys(req.body).forEach(
       (fields) => (loggedInUser[fields] = req.body[fields]),
     );
-
-    console.log(loggedInUser);
 
     await loggedInUser.save();
 
@@ -46,39 +43,36 @@ profileRouter.post("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.patch("/profile/forgotpassword", userAuth, async (req, res) => {
+profileRouter.patch("/profile/forgotpassword", userAuth ,async (req,res)=>{
+
   try {
-    const loggedInUser = req.user;
+   const  {existingPassword , newPassword} = req.body;
+   const user = req.user;
 
-    const { existingPassword, newPassword } = req.body;
+   if(newPassword == "" || existingPassword == ""){
+    throw new Error ("password is empty");
+   }
+ 
+   const isExistingPassword= await bcrypt.compare(existingPassword,user.password);
 
-    if (!existingPassword || !newPassword) {
-      throw new Error("both field are required");
-    }
+   if(!isExistingPassword) {
+    throw new Error ("please enter valid existing password");
+   }
 
-    const IsPasswordValid = await bcrypt.compare(
-      existingPassword,
-      loggedInUser.password,
-    );
 
-    if (!IsPasswordValid) {
-      throw new Error("password is not valid");
-    }
+   const encryptNewPass = await bcrypt.hash(newPassword , 12);
 
-    if (!validatePassword) {
-      throw new Error("new password is not strong");
-    }
+   user.password  = encryptNewPass;
 
-    const encryptedNewPassword = await bcrypt.hash(newPassword, 10);
+  await user.save()
 
-    loggedInUser.password = encryptedNewPassword;
-
-    loggedInUser.save();
-
-    res.send("password updated");
-  } catch (e) {
-    res.status(404).send("ERROR: " + e.message);
+  res.send("new password saved successfully");
+  }catch(e) { 
+    res.status(401).send("ERROR: "+ e.message);
   }
-});
+
+})
+
+
 
 module.exports = profileRouter;
