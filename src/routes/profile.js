@@ -12,7 +12,6 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
     if (!user) {
       throw new Error("user not found");
     }
-    console.log(user);
     res.send(user);
   } catch (err) {
     res.status(404).send("Error : " + err.message);
