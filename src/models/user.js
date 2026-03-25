@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: true,
+      index : true,
       minLength: 1,
       maxLength: 30,
     },
@@ -66,6 +67,10 @@ const userSchema = new mongoose.Schema(
 
   { timestamps: true },
 );
+
+//it will make fast db
+userSchema.index({firstName : 1})
+userSchema.index({gender : 1})
 
 
 userSchema.methods.getJWT =async function() {

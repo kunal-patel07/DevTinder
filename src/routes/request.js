@@ -20,7 +20,7 @@ requestRouter.post(
       }
       const toUser = await User.findById(toUserId);
       if (!toUser) {
-        throw new Error("User not found");
+        throw new Error("User not exist");
       }
 
       const isConnectionRequestExist = await connectionRequestModel.findOne({
