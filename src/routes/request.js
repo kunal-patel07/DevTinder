@@ -1,6 +1,6 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
-const connectionRequestModel = require("../models/connectionRequest");
+const  connectionRequestModel= require("../models/connectionRequest");
 const User = require("../models/user");
 const requestRouter = express.Router();
 
@@ -23,7 +23,9 @@ requestRouter.post(
         throw new Error("User not exist");
       }
 
-      const isConnectionRequestExist = await connectionRequestModel.findOne({
+
+      //this will ensure that you can't send request again 
+       const isConnectionRequestExist = await connectionRequestModel.findOne({
         $or: [
           { fromUserId, toUserId },
           { fromUserId: toUserId, toUserId: fromUserId },
@@ -43,7 +45,7 @@ requestRouter.post(
       const data = await requestData.save();
       res.json({ data });
     } catch (err) {
-      res.status(400).send("Error : " + err.message);
+      res.status(400).send("Error : " + err);
     }
   },
 );

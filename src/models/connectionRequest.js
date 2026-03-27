@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-const { applyTimestamps } = require("./user");
-
+ 
 const connectionRequestSchema = mongoose.Schema(
   {
     toUserId: {
@@ -27,19 +26,19 @@ connectionRequestSchema.index({toUserId : 1 , fromUserId : 1})
 
 
 
-connectionRequestSchema.pre("save",function(next) { 
+// connectionRequestSchema.pre("save",function(next) { 
  
-  const connectionRequest =this;
+//   const connectionRequest =this;
 
-  if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)){
-    throw new Error("cannot send request to yourself")
-  }
-  next();
-})
+//   if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)){
+//     return new Error("cannot send request to yourself"); 
+//   }
+//   next();
+//  })
 
 
 
-const connectionRequestModel = mongoose.model(
+const connectionRequestModel =new mongoose.model(
   "ConnectionRequest",
   connectionRequestSchema,
 );
