@@ -9,40 +9,42 @@ requestRouter.post(
   userAuth,
   async (req, res) => {
     try {
+      const { status, toUserId } = req.params;
       const fromUserId = req.user._id;
-      const toUserId = req.params.toUserId;
-      const status = req.params.status;
 
+      //validate status
       const allowedStatus = ["interested", "ignored"];
-
       if (!allowedStatus.includes(status)) {
-        return res.status(400).send("Invalid Status type  " + status);
+        throw new Error("Invalid status type" + status);
       }
-      const toUser = await User.findById(toUserId);
-      if (!toUser) {
-        throw new Error("User not exist");
+      //validate toUserId
+      const isUserIdExist = await User.findById(toUserId);
+
+      if (!isUserIdExist) {
+        throw new Error("user doesn't exist");
       }
 
-      //this will ensure that you can't send request again
-      const isConnectionRequestExist = await connectionRequestModel.findOne({
+      const isConnectionExist = await connectionRequestModel.findOne({
         $or: [
-          { fromUserId, toUserId },
-          { fromUserId: toUserId, toUserId: fromUserId },
+          { toUserId, fromUserId },
+          { toUserId: fromUserId, fromUserId: toUserId },
         ],
       });
 
-      if (isConnectionRequestExist) {
-        return res.status(400).send("cannot send request again");
+      if (isConnectionExist) {
+        throw new Error("connection request alreay exist");
       }
 
-      const requestData = new connectionRequestModel({
-        fromUserId,
+      const sendConnection = await connectionRequestModel({
         toUserId,
+        fromUserId,
         status,
       });
 
-      const data = await requestData.save();
-      res.json({ data });
+      sendConnection.save();
+
+      console.log(sendConnection);
+      res.json({ sendConnection });
     } catch (err) {
       res.status(400).send("Error : " + err);
     }
@@ -54,31 +56,29 @@ requestRouter.post(
   userAuth,
   async (req, res) => {
     try {
+      const { requestId, status } = req.params;
       const loggedInUser = req.user;
-      const {status,requestId} = req.params;
+      //validate status
+      const allowedStatus = ["accepted", "rejected"];
 
-       const allowedStatus = ["accepted" , "rejected"];
+      if (!allowedStatus.includes(status)) {
+        throw new Error("invalid status type " + status);
+      }
 
-       if(!allowedStatus.includes(status)){
-        throw new Error("invalid status type :" + status);
-       }
-       const connectionRequest  = await connectionRequestModel.findOne({
-        _id : requestId,
-        toUserId : loggedInUser._id,
-        status: "interested"
-       })
+      const acceptConnection = await connectionRequestModel.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
 
+      if (!acceptConnection) {
+        throw new Error("error in connection");
+      }
 
-       if(!connectionRequest){
-        throw new Error("invalid connection request");
-       }
-        
+    acceptConnection.status = status;
 
-         connectionRequest.status = status;
-       const data = await connectionRequest.save();
-       res.json({data});
-
-
+    const data =await acceptConnection.save();
+    res.json({data});
 
     } catch (e) {
       res.status(400).send("ERROR :" + e.message);

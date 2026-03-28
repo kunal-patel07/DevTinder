@@ -69,8 +69,8 @@ const userSchema = new mongoose.Schema(
 );
 
 //it will make fast db
-userSchema.index({firstName : 1})
-userSchema.index({gender : 1})
+// userSchema.index({firstName : 1})
+// userSchema.index({gender : 1})
 
 
 userSchema.methods.getJWT =async function() {
