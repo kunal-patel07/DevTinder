@@ -46,6 +46,9 @@ userRouter.get("/user/connection", userAuth, async (req, res) => {
     }
   });
 
-  res.json(data);
+  res.json({data:data});
 });
+
+
+
 module.exports = userRouter;
