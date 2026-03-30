@@ -51,4 +51,35 @@ userRouter.get("/user/connection", userAuth, async (req, res) => {
 
 
 
+
+
+// userRouter.get("/user/connection", userAuth, async (req, res) => {
+//   const loggedInUser = req.user;
+
+//   const findConnections = await connectionRequestModel
+//     .find({
+//       $and: [
+//         { status: "accepted" },
+//         {
+//           $or: [
+//             { fromUserId: loggedInUser._id },
+//             { toUserId: loggedInUser._id },
+//           ],
+//         },
+//       ],
+//     })
+//     .populate("fromUserId", ["firstName", "lastName", "photoUrl", "skills"])
+//     .populate("toUserId", ["firstName", "lastName", "photoUrl", "skills"]);
+
+//   const data = findConnections.map((field) => {
+//     if (field.fromUserId._id.toString() === loggedInUser._id.toString()) {
+//       return field.toUserId;
+//     } else {
+//       return field.fromUserId;
+//     }
+//   });
+
+//   res.json(data);
+// });
+
 module.exports = userRouter;
