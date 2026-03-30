@@ -58,13 +58,13 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
       .find({
         $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
       })
-      .select("fromuserId toUserId");
+      .select("fromUserId toUserId");
 
     const hideUserFromFeed = new Set();
 
     connectionRequests.forEach((request) => {
-    hideUserFromFeed.add(request.fromUserId)
-    hideUserFromFeed.add(request.toUserId)
+    hideUserFromFeed.add(request.fromUserId.toString())
+    hideUserFromFeed.add(request.toUserId.toString())
     });
 
     console.log(hideUserFromFeed)
