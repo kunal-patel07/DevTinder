@@ -52,7 +52,13 @@ userRouter.get("/user/connection", userAuth, async (req, res) => {
 
 userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
-    const loggedInUser = req.user;
+    // user should not see this all card
+    // his own card
+    // his connection
+    // ignored people
+    // already sent the connection request
+
+    const loggedInUser = await req.user;
 
     const connectionRequests = await connectionRequestModel
       .find({
@@ -60,22 +66,21 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
       })
       .select("fromUserId toUserId");
 
-    const hideUserFromFeed = new Set();
+    const hideUsersFromFeed = new Set();
 
-    connectionRequests.forEach((request) => {
-    hideUserFromFeed.add(request.fromUserId.toString())
-    hideUserFromFeed.add(request.toUserId.toString())
+    connectionRequests.forEach((req) => {
+      hideUsersFromFeed.add(req.fromUserId);
+      hideUsersFromFeed.add(req.toUserId);
     });
 
-    console.log(hideUserFromFeed)
     const user = await User.find({
-      $and : [
-      {_id : {$nin : Array.from(hideUserFromFeed)}},
-      {_id : {$ne : loggedInUser._id}}
-      ]
-    }).select(["firstName", "lastName", "photoUrl", "skills"])
+      $and: [
+        { _id: { $nin: Array.from(hideUsersFromFeed) } },
+        { _id: { $ne: loggedInUser._id } },
+      ],
+    });
 
-    res.json(user)
+    res.send(user);
   } catch (error) {
     res.status(400).send("ERROR :" + error.message);
   }
