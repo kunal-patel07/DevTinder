@@ -28,7 +28,7 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
-authRouter.post("/signin", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
     validateSignIn(req);
 
@@ -46,7 +46,7 @@ authRouter.post("/signin", async (req, res) => {
       const token =await user.getJWT();
 
      res.cookie("token" , token , { expires : new Date(Date.now() + 900000)});
-       res.send("signin successfully")
+        res.send(user)
     } else {
       throw new Error("Invalid Credential");
     }
