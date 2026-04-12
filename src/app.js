@@ -26,7 +26,7 @@ connectDb()
     console.log("database connected successfully");
 
     app.listen(port, () => {
-      console.log(`serve r is running on ${port} `);
+      console.log(`server is running on ${port} `);
     });
   })
   .catch((err) => {
