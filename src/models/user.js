@@ -63,6 +63,10 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    about : {
+      type : String,
+      default : "this is default about"
+    }
   },
 
   { timestamps: true },
