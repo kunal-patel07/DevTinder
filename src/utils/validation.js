@@ -39,16 +39,9 @@ const validateProfile = (req) => {
   ];
 
    const isProfileUpdated =  Object.keys(req.body).every((field) =>allowedEditFields.includes(field));
-
-     
-
-   return isProfileUpdated;
+  return isProfileUpdated;
 
 };
-
-
-
-
 const validatePassword = (newPassword) => { 
 
   if(!validate.isStrongPassword(newPassword)){
