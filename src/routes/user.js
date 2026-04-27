@@ -14,7 +14,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
         toUserId: loggedInUser._id,
         status: "interested",
       })
-      .populate("fromUserId", ["firstName", "lastName", "photoUrl", "skills"]);
+      .populate("fromUserId", ["firstName", "lastName", "photoUrl", "skills", "about","age","gender"]);
 
     res.json({ findConnections });
   } catch (e) {
@@ -37,8 +37,8 @@ userRouter.get("/user/connection", userAuth, async (req, res) => {
         },
       ],
     })
-    .populate("fromUserId", ["firstName", "lastName", "photoUrl", "skills"])
-    .populate("toUserId", ["firstName", "lastName", "photoUrl", "skills"]);
+    .populate("fromUserId", ["firstName", "lastName", "photoUrl", "skills","about"])
+    .populate("toUserId", ["firstName", "lastName", "photoUrl", "skills","about"]);
   const data = connectionRequest.map((field) => {
     if (field.fromUserId._id.toString() === loggedInUser._id.toString()) {
       return field.toUserId;
